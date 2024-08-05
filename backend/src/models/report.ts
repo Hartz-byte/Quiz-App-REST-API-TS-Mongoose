@@ -26,7 +26,7 @@ const reportSchema = new schema(
     },
     result: {
       type: String,
-      required: true
+      required: true,
     },
   },
   { timestamps: true }

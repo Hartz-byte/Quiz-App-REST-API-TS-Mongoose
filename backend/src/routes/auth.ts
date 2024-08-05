@@ -33,7 +33,8 @@ router.post(
     body("email")
       .trim()
       .isEmail()
-      .custom((emailId: String) => {
+      .toLowerCase()
+      .custom(async (emailId: String) => {
         return isUserExist(emailId)
           .then((status: Boolean) => {
             if (status) {
@@ -96,20 +97,18 @@ router.post(
 );
 
 //POST /auth/activate account
-router.post('/activateaccount', [
-  body('key')
-  .trim()
-  .isLength({min: 8}).withMessage("Invalid Key!"),
-  body("email").trim().isEmail().withMessage("Invalid Email!")
-], activateAccount)
-
-
-
+router.post(
+  "/activateaccount",
+  [
+    body("key").trim().isLength({ min: 8 }).withMessage("Invalid Key!"),
+    body("email").trim().isEmail().withMessage("Invalid Email!"),
+  ],
+  activateAccount
+);
 
 //Verify Registration otp route
 // POST -> /auth/verify-registration-otp/:token  (use params)
 router.post("/verify-registration-otp/:token", verifyRegistrationOTP);
-
 
 // Resend otp for registration
 // POST -> /auth/resend-registration-otp/:token  (use Params)
@@ -121,23 +120,23 @@ router.post(
   activateUser
 );
 
-
 //re-activate link
 // GET /user/activate
 router.get("/activate/:token", activateUserCallback);
 
-//POST 
+//POST
 router.post(
   "/forgotpassword",
   [body("email").trim().isEmail().withMessage("Invalid Email!")],
   forgotPassword
 );
 
-router.get("/forgotpassword/:token",forgotPasswordCallback);
+router.get("/forgotpassword/:token", forgotPasswordCallback);
 
-router.post("/forgotpassword/:userId",
-[
-  body("password")
+router.post(
+  "/forgotpassword/:userId",
+  [
+    body("password")
       .trim()
       .isLength({ min: 8 })
       .custom((password: String) => {
@@ -160,8 +159,8 @@ router.post("/forgotpassword/:userId",
         }
         return true;
       }),
-],
-resetPassword
+  ],
+  resetPassword
 );
 
 export default router;

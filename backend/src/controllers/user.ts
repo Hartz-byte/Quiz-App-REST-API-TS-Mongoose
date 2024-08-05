@@ -7,8 +7,7 @@ import { ReturnResponse } from "../utils/interfaces";
 
 import sendEmail from "../utils/email";
 
-
-import OTP from "../models/otp"
+import OTP from "../models/OTP";
 import { sendDeactivateEmailOTP } from "./otp";
 
 const getUser: RequestHandler = async (req, res, next) => {
@@ -63,7 +62,6 @@ const updateUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 const changePassword: RequestHandler = async (req, res, next) => {
   let resp: ReturnResponse;
   const userId = req.userId;
@@ -109,11 +107,9 @@ const changePassword: RequestHandler = async (req, res, next) => {
     }
 
     // checking if current password and new password are same
-    const prevPasswordSame = await bcrypt.compare(currentPassword, newPassword)
+    const prevPasswordSame = await bcrypt.compare(currentPassword, newPassword);
     if (prevPasswordSame) {
-      const err = new ProjectError(
-        "Same as current password. Try another one"
-      );
+      const err = new ProjectError("Same as current password. Try another one");
       err.statusCode = 401;
       throw err;
     }
@@ -126,8 +122,6 @@ const changePassword: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
-
-
 
 // Send otp for deactivate user account
 const deactivateUser: RequestHandler = async (req, res, next) => {
@@ -150,9 +144,9 @@ const deactivateUser: RequestHandler = async (req, res, next) => {
       err.statusCode = 401;
       throw err;
     }
-    
+
     // find OTP for same email if already present then resend otp take time
-    const otpExist = await OTP.findOne({ email:user.email });
+    const otpExist = await OTP.findOne({ email: user.email });
 
     // otp found then throw an error as resend otp after some time
     if (otpExist) {
@@ -161,13 +155,18 @@ const deactivateUser: RequestHandler = async (req, res, next) => {
       // find current time
       const currentTime = new Date();
       // change time into milliseconds and find difference between them
-      const timeDifferenceInMilliseconds = (otpExistCreatedAt.getTime() + 120000) - currentTime.getTime();
+      const timeDifferenceInMilliseconds =
+        otpExistCreatedAt.getTime() + 120000 - currentTime.getTime();
       // convert milliseconds to minutes
-      const timeDifferenceInMinutes = Math.floor(timeDifferenceInMilliseconds / (1000 * 60));
+      const timeDifferenceInMinutes = Math.floor(
+        timeDifferenceInMilliseconds / (1000 * 60)
+      );
       // get rest expire time
       const timeExpire = timeDifferenceInMinutes;
 
-      const err = new ProjectError(`Resend OTP after ${timeExpire + 1} minutes`);
+      const err = new ProjectError(
+        `Resend OTP after ${timeExpire + 1} minutes`
+      );
       err.statusCode = 401;
       throw err;
     }
@@ -187,12 +186,10 @@ const deactivateUser: RequestHandler = async (req, res, next) => {
       data: {},
     };
     res.status(200).send(resp);
-
-    } catch (error) {
+  } catch (error) {
     next(error);
   }
 };
-
 
 //Verify Deactivate Email OTP
 const verifyDeactivateAccountOTP: RequestHandler = async (req, res, next) => {
@@ -227,10 +224,9 @@ const verifyDeactivateAccountOTP: RequestHandler = async (req, res, next) => {
       const err = new ProjectError("OTP has not send on this email ");
       err.statusCode = 400;
       throw err;
-
     }
     // Check OTP match or not, if not match then throw an error Incorrect OTP
-    else if (otp != matchOTP[0].otp) {      
+    else if (otp != matchOTP[0].otp) {
       // The otp is not Correct
       const err = new ProjectError("Incorrect OTP");
       err.statusCode = 400;
@@ -241,15 +237,16 @@ const verifyDeactivateAccountOTP: RequestHandler = async (req, res, next) => {
     user.isDeactivated = true;
     // Save result into database
     const result = await user.save();
-    resp = { status: "success", message: "Deactivate Account Successfull !!", data: { userId: user._id,email:email } };
+    resp = {
+      status: "success",
+      message: "Deactivate Account Successfull !!",
+      data: { userId: user._id, email: email },
+    };
     res.status(200).send(resp);
-
   } catch (error) {
     next(error);
   }
-}
-
-
+};
 
 const isActiveUser = async (userId: String) => {
   const user = await User.findById(userId);
@@ -262,4 +259,11 @@ const isActiveUser = async (userId: String) => {
   return !user.isDeactivated;
 };
 
-export { deactivateUser, getUser, isActiveUser, updateUser, changePassword, verifyDeactivateAccountOTP};
+export {
+  deactivateUser,
+  getUser,
+  isActiveUser,
+  updateUser,
+  changePassword,
+  verifyDeactivateAccountOTP,
+};

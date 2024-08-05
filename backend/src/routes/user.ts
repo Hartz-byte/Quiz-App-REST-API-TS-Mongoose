@@ -2,7 +2,6 @@
 import express from "express";
 import { body } from "express-validator";
 
-
 import {
   deactivateUser,
   getUser,
@@ -33,7 +32,11 @@ router.patch("/deactivate", isAuthenticated, deactivateUser);
 
 // Verify Deactivate Account Email OTP
 // POST -> /user/deactivate/verify-deactivate-account-otp
-router.post("/deactivate/verify-deactivate-account-otp", isAuthenticated, verifyDeactivateAccountOTP);
+router.post(
+  "/deactivate/verify-deactivate-account-otp",
+  isAuthenticated,
+  verifyDeactivateAccountOTP
+);
 
 //Put  /user/changepassword
 router.put(

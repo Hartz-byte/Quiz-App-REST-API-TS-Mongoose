@@ -13,6 +13,7 @@ const isAuthenticated = async (
   try {
     const secretKey = process.env.SECRET_KEY || "";
     const authHeader = req.get("Authorization");
+    console.log(authHeader);
 
     if (!authHeader) {
       const err = new ProjectError("Not authenticated");

@@ -11,7 +11,7 @@ const quizSchema = new schema(
     },
     category: {
       type: String,
-      required: true
+      required: true,
     },
     difficultyLevel: {
       type: String,
@@ -28,7 +28,7 @@ const quizSchema = new schema(
     answers: {},
     passingPercentage: {
       type: Number,
-      required: true
+      required: true,
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
@@ -38,25 +38,27 @@ const quizSchema = new schema(
       type: Boolean,
       default: false,
     },
-    
+
     isPublicQuiz: {
       type: Boolean,
-      required: true
+      required: true,
     },
     allowedUser: {
       type: [],
-      default: []
+      default: [],
     },
-    attemptsAllowedPerUser: {   //how many times quiz can be attempted by user
-      type: Number              //required is false, if not provided quiz can be attempted multiple times
+    attemptsAllowedPerUser: {
+      //how many times quiz can be attempted by user
+      type: Number, //required is false, if not provided quiz can be attempted multiple times
     },
-    attemptedUsers: [        //Stores an array of objects users who have attempted the quiz
-      {                      //and number of attempts left
+    attemptedUsers: [
+      //Stores an array of objects users who have attempted the quiz
+      {
+        //and number of attempts left
         id: String,
-        attemptsLeft: Number
-      }
-    ]
-    
+        attemptsLeft: Number,
+      },
+    ],
   },
   { timestamps: true }
 );

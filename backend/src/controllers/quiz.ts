@@ -17,7 +17,18 @@ const createQuiz: RequestHandler = async (req, res, next) => {
     const attemptsAllowedPerUser = req.body.attemptsAllowedPerUser;
     const isPublicQuiz = req.body.isPublicQuiz;
     const allowedUser = req.body.allowedUser;
-    const quiz = new Quiz({ name, category, difficultyLevel, questionList, answers, passingPercentage, createdBy, attemptsAllowedPerUser, isPublicQuiz, allowedUser });
+    const quiz = new Quiz({
+      name,
+      category,
+      difficultyLevel,
+      questionList,
+      answers,
+      passingPercentage,
+      createdBy,
+      attemptsAllowedPerUser,
+      isPublicQuiz,
+      allowedUser,
+    });
     const result = await quiz.save();
     const resp: ReturnResponse = {
       status: "success",
@@ -43,7 +54,7 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         createdBy: 1,
         passingPercentage: 1,
         isPublicQuiz: 1,
-        allowedUser: 1
+        allowedUser: 1,
       });
 
       if (!quiz) {
@@ -51,7 +62,7 @@ const getQuiz: RequestHandler = async (req, res, next) => {
         err.statusCode = 404;
         throw err;
       }
-      if(!quiz.isPublicQuiz && !quiz.allowedUser.includes(req.userId)){
+      if (!quiz.isPublicQuiz && !quiz.allowedUser.includes(req.userId)) {
         const err = new ProjectError("You are not authorized!");
         err.statusCode = 403;
         throw err;
@@ -189,11 +200,11 @@ const publishQuiz: RequestHandler = async (req, res, next) => {
       err.statusCode = 405;
       throw err;
     }
-    if(quiz.isPublicQuiz === false && quiz.allowedUser.length === 0){
+    if (quiz.isPublicQuiz === false && quiz.allowedUser.length === 0) {
       const err = new ProjectError("Specify users for private quiz!");
-          err.statusCode = 404;
-          throw err;
-  }
+      err.statusCode = 404;
+      throw err;
+    }
 
     quiz.isPublished = true;
     await quiz.save();
@@ -224,9 +235,10 @@ const isValidQuiz = async (
       let opt = Object.keys(question["options"]);
       if (
         opt.indexOf(
-          `${Object.values(answers)[
-          Object.keys(answers).indexOf(question.questionNumber.toString())
-          ]
+          `${
+            Object.values(answers)[
+              Object.keys(answers).indexOf(question.questionNumber.toString())
+            ]
           }`
         ) == -1
       ) {
@@ -247,37 +259,38 @@ const isValidQuizName = async (name: String) => {
 
 const getAllQuiz: RequestHandler = async (req, res, next) => {
   try {
-    let quiz = await Quiz.find({ isPublished: true }, {
-      name: 1,
-      category: 1,
-      questionList: 1,
-      createdBy: 1,
-      passingPercentage: 1,
-      isPublicQuiz:1,
-      allowedUser:1
-    });
-    
-    //filter quizzes created by user itself
-    quiz = quiz.filter(item => {
-      if(item.isPublicQuiz || item.allowedUser.includes(req.userId)){
-          return item.createdBy.toString() !== req.userId;
+    let quiz = await Quiz.find(
+      { isPublished: true },
+      {
+        name: 1,
+        category: 1,
+        questionList: 1,
+        createdBy: 1,
+        passingPercentage: 1,
+        isPublicQuiz: 1,
+        allowedUser: 1,
       }
-      
+    );
+
+    //filter quizzes created by user itself
+    quiz = quiz.filter((item) => {
+      if (item.isPublicQuiz || item.allowedUser.includes(req.userId)) {
+        return item.createdBy.toString() !== req.userId;
+      }
     });
-    
+
     if (!quiz) {
       const err = new ProjectError("No quiz found!");
       err.statusCode = 404;
       throw err;
     }
-    
+
     const resp: ReturnResponse = {
       status: "success",
       message: "All Published Quiz",
       data: quiz,
     };
     res.status(200).send(resp);
-
   } catch (error) {
     next(error);
   }
@@ -285,16 +298,18 @@ const getAllQuiz: RequestHandler = async (req, res, next) => {
 
 const getAllQuizExam: RequestHandler = async (req, res, next) => {
   try {
-    let quiz = await Quiz.find({ isPublished: true, category: "exam" },
-    {
-      name: 1,
-      category: 1,
-      questionList: 1,
-      createdBy: 1,
-      passingPercentage: 1,
-      isPublicQuiz: 1,
-      allowedUser: 1,
-    });
+    let quiz = await Quiz.find(
+      { isPublished: true, category: "exam" },
+      {
+        name: 1,
+        category: 1,
+        questionList: 1,
+        createdBy: 1,
+        passingPercentage: 1,
+        isPublicQuiz: 1,
+        allowedUser: 1,
+      }
+    );
 
     quiz = quiz.filter((item) => {
       if (item.isPublicQuiz || item.allowedUser.includes(req.userId)) {
@@ -321,16 +336,18 @@ const getAllQuizExam: RequestHandler = async (req, res, next) => {
 
 const getAllQuizTest: RequestHandler = async (req, res, next) => {
   try {
-    let quiz = await Quiz.find({ isPublished: true, category: "test" },
-    {
-      name: 1,
-      category: 1,
-      questionList: 1,
-      createdBy: 1,
-      passingPercentage: 1,
-      isPublicQuiz: 1,
-      allowedUser: 1,
-    });
+    let quiz = await Quiz.find(
+      { isPublished: true, category: "test" },
+      {
+        name: 1,
+        category: 1,
+        questionList: 1,
+        createdBy: 1,
+        passingPercentage: 1,
+        isPublicQuiz: 1,
+        allowedUser: 1,
+      }
+    );
 
     quiz = quiz.filter((item) => {
       if (item.isPublicQuiz || item.allowedUser.includes(req.userId)) {
@@ -365,5 +382,5 @@ export {
   updateQuiz,
   getAllQuiz,
   getAllQuizExam,
-  getAllQuizTest
+  getAllQuizTest,
 };

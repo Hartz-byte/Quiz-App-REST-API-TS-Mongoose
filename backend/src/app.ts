@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import cors from "cors"
+import cors from "cors";
 
 import authRoute from "./routes/auth";
 import examRoute from "./routes/exam";
@@ -14,13 +14,17 @@ import clearBlacklistedTokenScheduler from "./utils/clearBlacklistedTokenSchedul
 
 const app = express();
 
-app.use(cors({origin:`http://${process.env.CORS_ORIGIN_URL}`,credentials:true}))
+// app.use(
+//   cors({ origin: `http://${process.env.CORS_ORIGIN_URL}`, credentials: true })
+// );
+app.use(cors());
 
 const connectionString = process.env.CONNECTION_STRING || "";
 
 const port = process.env.PORT;
 
 app.use(express.json());
+
 declare global {
   namespace Express {
     interface Request {
@@ -45,7 +49,7 @@ app.use("/report", reportRoute);
 app.use("/user", userRoute);
 
 //Redirect /favQuestion to favQuestionRoute
-app.use("/favquestion",favQuestionRoute);
+app.use("/favquestion", favQuestionRoute);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).send("Server is working!");
