@@ -178,17 +178,15 @@ function QuizList() {
           >
             <h2 style={{ color: "#333652" }}>Quiz List</h2>
 
-            <h2 style={{ color: "#333652" }}>Exam</h2>
+            <h2 style={{ color: "red", textDecoration: "underline" }}>Exam</h2>
 
             {!!quizExam &&
               quizExam.length !== 0 &&
               quizExam.map((list) => {
                 return (
                   <div key={list._id}>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 80 }}
-                    >
-                      <div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ width: "200px" }}>
                         <h4>{list.name}</h4>
                       </div>
                       <div>
@@ -223,16 +221,25 @@ function QuizList() {
               </div>
             )}
 
-            <h2 style={{ color: "#333652" }}>Test</h2>
+            {/* border */}
+            <div
+              style={{
+                width: "671px",
+                height: "2px",
+                backgroundColor: "white",
+                left: "27.9%",
+                marginTop: "10px",
+              }}
+            />
+
+            <h2 style={{ color: "red", textDecoration: "underline" }}>Test</h2>
             {!!quizTest &&
               quizTest.length !== 0 &&
               quizTest.map((list) => {
                 return (
                   <div key={list._id}>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 80 }}
-                    >
-                      <div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ width: "200px" }}>
                         <h4>{list.name}</h4>
                       </div>
                       <div>

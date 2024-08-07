@@ -122,7 +122,7 @@ const Home = () => {
             borderRadius: "7px",
           }}
         >
-          Publish Quiz
+          My Quizzes
         </button>
 
         <button

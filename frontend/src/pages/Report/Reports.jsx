@@ -152,32 +152,36 @@ function Reports() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "180px",
+          marginTop: "140px",
         }}
       >
         <div>
-          <h2 style={{ color: "#333652" }}>Quiz App</h2>
+          <h1 style={{ color: "#333652", marginLeft: "20px" }}>Quiz App</h1>
 
-          <div>
-            <h2 style={{ color: "#333652" }}>Report</h2>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{ color: "red" }}>Report</h2>
             {!!report && (
               <div style={{ marginBottom: "20px" }}>
                 <div>
-                  <div>
-                    <label>Status: </label>
-                    <label style={{ fontWeight: "bold" }}>
-                      {report.result}
-                    </label>
+                  <div style={{ display: "flex" }}>
+                    <h3 style={{ width: "110px" }}>Status: </h3>
+                    <h3 style={{ fontWeight: "bold" }}>{report.result}</h3>
                   </div>
-                  <div>
-                    <label>Marks: </label>
-                    <label>
+                  <div style={{ display: "flex" }}>
+                    <h3 style={{ width: "110px" }}>Marks: </h3>
+                    <h3>
                       {report.score}/{report.total}
-                    </label>
+                    </h3>
                   </div>
-                  <div>
-                    <label>Percentage: </label>
-                    <label>{report.percentage}%</label>
+                  <div style={{ display: "flex" }}>
+                    <h3 style={{ width: "110px" }}>Percentage: </h3>
+                    <h3>{report.percentage}%</h3>
                   </div>
                 </div>
               </div>

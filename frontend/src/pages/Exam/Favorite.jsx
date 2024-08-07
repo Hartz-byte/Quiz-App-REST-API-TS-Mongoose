@@ -166,7 +166,9 @@ function Favorite() {
           alignItems: "center",
         }}
       >
-        <h2 style={{ color: "#333652" }}>Quiz App</h2>
+        <h1 style={{ color: "#333652", textDecoration: "underline" }}>
+          Favorites
+        </h1>
 
         <div>
           {!!favQues &&
@@ -176,18 +178,27 @@ function Favorite() {
                 <div key={list.question}>
                   <div>
                     <div style={{ display: "flex", gap: 10 }}>
-                      <p>Question {i + 1}:</p>
-                      <p>{list.question}</p>
+                      <h2 style={{ color: "red" }}>Question {i + 1}:</h2>
+                      <h2>{list.question}</h2>
                     </div>
                   </div>
                   {!!list.options && (
                     <div>
-                      <p>Options:</p>
+                      <h3>Options:</h3>
                       {Object.keys(list.options).map(function (key) {
                         return (
-                          <div key={key} style={{ display: "flex", gap: 10 }}>
-                            <p>{key}:</p>
-                            <p>{list.options[key]}</p>
+                          <div
+                            key={key}
+                            style={{
+                              display: "flex",
+                              gap: 10,
+                              fontSize: "18px",
+                            }}
+                          >
+                            <p style={{ fontSize: "18px" }}>{key}:</p>
+                            <p style={{ fontSize: "18px" }}>
+                              {list.options[key]}
+                            </p>
                           </div>
                         );
                       })}
@@ -203,12 +214,22 @@ function Favorite() {
                             color: "white",
                             padding: "5px",
                             cursor: "pointer",
-                            marginLeft: "100px",
+                            marginLeft: "80%",
                           }}
                         >
-                          Remove
+                          Remove Favorite
                         </button>
                       </div>
+
+                      {/* border */}
+                      <div
+                        style={{
+                          width: "600px",
+                          height: "2px",
+                          backgroundColor: "white",
+                          margin: "30px 0px",
+                        }}
+                      />
                     </div>
                   )}
                 </div>
@@ -217,7 +238,9 @@ function Favorite() {
           {!!favQues && favQues.length === 0 && (
             <div>
               <div>
-                <h4 style={{ color: "#333652" }}>No question added!</h4>
+                <h4 style={{ color: "#333652", fontSize: "18px" }}>
+                  No question added!
+                </h4>
               </div>
             </div>
           )}

@@ -5,6 +5,7 @@ import axios from "axios";
 import Pic1 from "../../assets/1.png";
 import Pic2 from "../../assets/2.png";
 import Pic3 from "../../assets/3.png";
+import PublishQuiz from "./PublishQuiz";
 
 function CreateQuiz() {
   const location = useLocation();
@@ -99,6 +100,8 @@ function CreateQuiz() {
   function handlePublicQuizChange(evt) {
     evt.preventDefault();
     setIsPublicQuiz(evt.target.value);
+
+    console.log(evt.target.value);
   }
 
   function handleAllowedUserChange(index, e) {
@@ -464,14 +467,7 @@ function CreateQuiz() {
           borderRadius: "15px",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div style={{ margin: "50px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
             <div
               style={{
@@ -487,14 +483,14 @@ function CreateQuiz() {
 
           <div>
             <div>
-              <h4>Quiz Name</h4>
+              <h2 style={{ color: "red" }}>Quiz Name *</h2>
               <input
                 type="text"
                 id="Name"
                 placeholder="Name of 10 characters long"
                 onChange={handleQuizNameChange}
                 style={{
-                  width: "200px",
+                  width: "300px",
                   padding: "10px",
                   borderRadius: "5px",
                   marginBottom: "10px",
@@ -513,199 +509,362 @@ function CreateQuiz() {
                 }}
               />
 
-              <h4 style={{ marginTop: "30px" }}>Category</h4>
-              <select
-                id="Category"
-                onChange={handleCategoryChange}
+              <h2 style={{ color: "red" }}>Details *</h2>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "20px" }}
+              >
+                <div>
+                  <h4 style={{ fontSize: "18px" }}>Category</h4>
+                  <select
+                    id="Category"
+                    onChange={handleCategoryChange}
+                    style={{
+                      width: "250px",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    <option value="Choose Option">Choose Option</option>
+                    <option value="exam">Exam</option>
+                    <option value="test">Test</option>
+                  </select>
+                </div>
+
+                <div>
+                  <h4>Difficulty Level </h4>
+                  <select
+                    id="DifficultyLevel"
+                    onChange={handleDifficultyLevelChange}
+                    style={{
+                      width: "250px",
+                      padding: "10px",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    <option value="Choose Option">Choose Option</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+              </div>
+
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "20px" }}
+              >
+                <div>
+                  <div>
+                    <h4 style={{ marginTop: "30px" }}>Passing Percentage</h4>
+                    <input
+                      type="text"
+                      placeholder="Enter the number only"
+                      id="passing"
+                      onChange={handlePassingPercentageChange}
+                      style={{
+                        width: "225px",
+                        padding: "10px",
+                        borderRadius: "5px",
+                        marginBottom: "10px",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div>
+                    <h4 style={{ marginTop: "30px" }}>
+                      Attempts allowed per user
+                    </h4>
+                    <input
+                      type="text"
+                      placeholder="Total attempts allowed"
+                      onChange={handleAttemptsAllowedChange}
+                      id="attempts"
+                      style={{
+                        width: "225px",
+                        padding: "10px",
+                        borderRadius: "5px",
+                        marginBottom: "10px",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div>
+                  <h4 style={{ marginTop: "30px" }}>
+                    Is this is a public quiz?
+                  </h4>
+                  <select
+                    onChange={handlePublicQuizChange}
+                    style={{
+                      width: "222px",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <option value="Choose Option">Choose Option</option>
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                  </select>
+                </div>
+              </div>
+
+              {isPublicQuiz === "False" && (
+                <div>
+                  <div style={{ marginBottom: "20px" }}>
+                    <h4 style={{ marginTop: "30px" }}>Allowed User</h4>
+                    {!!allowedUser &&
+                      allowedUser.map((value, index) => {
+                        let lastKey = allowedUser.length;
+                        if (lastKey === 1) {
+                          lastKey = undefined;
+                        }
+                        return (
+                          <div key={index}>
+                            {index === 0 && (
+                              <button
+                                style={{
+                                  marginBottom: "20px",
+                                  borderRadius: "4px",
+                                  backgroundColor: "#333652",
+                                  color: "white",
+                                  padding: "5px",
+                                }}
+                                onClick={handleAddUserClick}
+                                key={index}
+                              >
+                                Add User
+                              </button>
+                            )}
+
+                            <div>
+                              <span id={index}>{index + 1} </span>
+                              <input
+                                type="text"
+                                value={value}
+                                placeholder="Enter user id"
+                                onChange={(e) =>
+                                  handleAllowedUserChange(index, e)
+                                }
+                                style={{
+                                  marginBottom: "10px",
+                                  borderRadius: "4px",
+                                  height: "30px",
+                                  padding: "5px",
+                                }}
+                              />
+                            </div>
+
+                            {index === lastKey - 1 && (
+                              <button
+                                style={{
+                                  marginTop: "10px",
+                                  borderRadius: "4px",
+                                  backgroundColor: "red",
+                                  color: "white",
+                                  padding: "5px",
+                                  marginLeft: "500px",
+                                }}
+                                onClick={handleRemoveUserClick}
+                                key={index}
+                              >
+                                Remove User
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* border */}
+              <div
                 style={{
-                  width: "222px",
-                  padding: "10px",
-                  borderRadius: "5px",
+                  width: "671px",
+                  height: "1px",
+                  backgroundColor: "white",
+                  position: "absolute",
+                  left: "27.9%",
+                  marginTop: "20px",
+                }}
+              />
+
+              <div
+                style={{
+                  height: "100%",
+                  backgroundColor: "#2a9d8f",
+                  marginTop: "50px",
                   marginBottom: "10px",
+                  paddingLeft: "50px",
+                  paddingBottom: "15px",
+                  borderRadius: "15px",
                 }}
               >
-                <option value="Choose Option">Choose Option</option>
-                <option value="exam">Exam</option>
-                <option value="test">Test</option>
-              </select>
+                <h1
+                  style={{
+                    paddingTop: "20px",
+                    marginLeft: "210px",
+                    color: "white",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Questions
+                </h1>
+                {!!questionList &&
+                  questionList.map((list) => {
+                    let length = questionList.length;
+                    if (length === 1) {
+                      length = undefined;
+                    }
+                    return (
+                      <div key={list.questionNumber}>
+                        {list.questionNumber === 1 && (
+                          <button
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "#333652",
+                              color: "white",
+                              padding: "5px",
+                            }}
+                            onClick={handleAddQuesClick}
+                            key="addQues"
+                          >
+                            Add Question
+                          </button>
+                        )}
 
-              {/* border */}
-              <div
-                style={{
-                  width: "671px",
-                  height: "1px",
-                  backgroundColor: "white",
-                  position: "absolute",
-                  left: "27.9%",
-                  marginTop: "10px",
-                }}
-              />
+                        <div>
+                          <h2 style={{ color: "#fca311", marginLeft: "220px" }}>
+                            Question {list.questionNumber}:
+                          </h2>
+                          <input
+                            type="text"
+                            placeholder="Enter question"
+                            value={list.question}
+                            onChange={(e) =>
+                              handleQuestionChange(list.questionNumber, e)
+                            }
+                            style={{
+                              width: "300px",
+                              padding: "10px",
+                              borderRadius: "5px",
+                              marginBottom: "10px",
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <p>Options</p>
+                          {!!list.options &&
+                            Object.keys(list.options).map(function (key) {
+                              const lastKey = Object.keys(list.options).length;
+                              let lastKeyString;
+                              if (lastKey !== 1) {
+                                lastKeyString = lastKey.toString();
+                              }
+                              return (
+                                <div key={key}>
+                                  {key === "1" && (
+                                    <button
+                                      onClick={() =>
+                                        handleAddOptionClick(
+                                          list.questionNumber
+                                        )
+                                      }
+                                      key="addOption"
+                                      style={{
+                                        marginBottom: "10px",
+                                        borderRadius: "4px",
+                                        backgroundColor: "#333652",
+                                        color: "white",
+                                        padding: "5px",
+                                      }}
+                                    >
+                                      Add Option
+                                    </button>
+                                  )}
 
-              <h4>Difficulty Level </h4>
-              <select
-                id="DifficultyLevel"
-                onChange={handleDifficultyLevelChange}
-                style={{
-                  width: "222px",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                }}
-              >
-                <option value="Choose Option">Choose Option</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
+                                  <div>
+                                    <input
+                                      type="text"
+                                      value={list.options[key]}
+                                      placeholder={`Enter option ${key}`}
+                                      id="options"
+                                      onChange={(e) =>
+                                        handleOptionsChange(
+                                          list.questionNumber,
+                                          key,
+                                          e
+                                        )
+                                      }
+                                      style={{
+                                        width: "300px",
+                                        padding: "10px",
+                                        borderRadius: "5px",
+                                        marginBottom: "10px",
+                                      }}
+                                    />
+                                  </div>
 
-              {/* border */}
-              <div
-                style={{
-                  width: "671px",
-                  height: "1px",
-                  backgroundColor: "white",
-                  position: "absolute",
-                  left: "27.9%",
-                  marginTop: "10px",
-                }}
-              />
+                                  {key === lastKeyString && (
+                                    <button
+                                      onClick={() =>
+                                        handleRemoveOptionClick(
+                                          list.questionNumber
+                                        )
+                                      }
+                                      key="removeOption"
+                                      style={{
+                                        marginBottom: "10px",
+                                        borderRadius: "4px",
+                                        backgroundColor: "RED",
+                                        color: "white",
+                                        padding: "5px",
+                                      }}
+                                    >
+                                      Remove Option
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                        </div>
 
-              <h4 style={{ marginTop: "20px" }}>Questions</h4>
-
-              {!!questionList &&
-                questionList.map((list) => {
-                  let length = questionList.length;
-                  if (length === 1) {
-                    length = undefined;
-                  }
-                  return (
-                    <div key={list.questionNumber}>
-                      {list.questionNumber === 1 && (
-                        <button
+                        {/* border */}
+                        <div
                           style={{
-                            marginBottom: "10px",
-                            borderRadius: "4px",
-                            backgroundColor: "#333652",
-                            color: "white",
-                            padding: "5px",
-                          }}
-                          onClick={handleAddQuesClick}
-                          key="addQues"
-                        >
-                          Add Question
-                        </button>
-                      )}
-
-                      <div>
-                        <p>Question {list.questionNumber}:</p>
-                        <input
-                          type="text"
-                          placeholder="Enter question"
-                          value={list.question}
-                          onChange={(e) =>
-                            handleQuestionChange(list.questionNumber, e)
-                          }
-                          style={{
-                            width: "200px",
-                            padding: "10px",
-                            borderRadius: "5px",
-                            marginBottom: "10px",
+                            width: "500px",
+                            height: "5px",
+                            backgroundColor: "white",
+                            marginTop: "15px",
                           }}
                         />
+
+                        {list.questionNumber === length && (
+                          <button
+                            onClick={handleRemoveQuesClick}
+                            key="removeQues"
+                            style={{
+                              margin: "20px 0px",
+                              borderRadius: "4px",
+                              backgroundColor: "red",
+                              color: "white",
+                              padding: "5px",
+                              marginLeft: "370px",
+                            }}
+                          >
+                            Remove Question
+                          </button>
+                        )}
                       </div>
-                      <div>
-                        <p>Options</p>
-                        {!!list.options &&
-                          Object.keys(list.options).map(function (key) {
-                            const lastKey = Object.keys(list.options).length;
-                            let lastKeyString;
-                            if (lastKey !== 1) {
-                              lastKeyString = lastKey.toString();
-                            }
-                            return (
-                              <div key={key}>
-                                {key === "1" && (
-                                  <button
-                                    onClick={() =>
-                                      handleAddOptionClick(list.questionNumber)
-                                    }
-                                    key="addOption"
-                                    style={{
-                                      marginBottom: "10px",
-                                      borderRadius: "4px",
-                                      backgroundColor: "#333652",
-                                      color: "white",
-                                      padding: "5px",
-                                    }}
-                                  >
-                                    Add Option
-                                  </button>
-                                )}
-
-                                <div>
-                                  <input
-                                    type="text"
-                                    value={list.options[key]}
-                                    placeholder={`Enter option ${key}`}
-                                    id="options"
-                                    onChange={(e) =>
-                                      handleOptionsChange(
-                                        list.questionNumber,
-                                        key,
-                                        e
-                                      )
-                                    }
-                                    style={{
-                                      width: "200px",
-                                      padding: "10px",
-                                      borderRadius: "5px",
-                                      marginBottom: "10px",
-                                    }}
-                                  />
-                                </div>
-
-                                {key === lastKeyString && (
-                                  <button
-                                    onClick={() =>
-                                      handleRemoveOptionClick(
-                                        list.questionNumber
-                                      )
-                                    }
-                                    key="removeOption"
-                                    style={{
-                                      marginBottom: "10px",
-                                      borderRadius: "4px",
-                                      backgroundColor: "#333652",
-                                      color: "white",
-                                      padding: "5px",
-                                    }}
-                                  >
-                                    Remove Option
-                                  </button>
-                                )}
-                              </div>
-                            );
-                          })}
-                      </div>
-
-                      {list.questionNumber === length && (
-                        <button
-                          onClick={handleRemoveQuesClick}
-                          key="removeQues"
-                          style={{
-                            marginBottom: "20px",
-                            borderRadius: "4px",
-                            backgroundColor: "#333652",
-                            color: "white",
-                            padding: "5px",
-                          }}
-                        >
-                          Remove Question
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
 
               {/* border */}
               <div
@@ -721,7 +880,7 @@ function CreateQuiz() {
 
               <div>
                 <div>
-                  <h4 style={{ marginTop: "35px" }}>Answers</h4>
+                  <h2 style={{ marginTop: "35px", color: "red" }}>Answers *</h2>
                   {!!questionList &&
                     questionList.map((list) => {
                       return (
@@ -759,167 +918,6 @@ function CreateQuiz() {
                 }}
               />
 
-              <div>
-                <div>
-                  <h4 style={{ marginTop: "30px" }}>Passing Percentage</h4>
-                  <input
-                    type="text"
-                    placeholder="Enter the number only"
-                    id="passing"
-                    onChange={handlePassingPercentageChange}
-                    style={{
-                      width: "200px",
-                      padding: "10px",
-                      borderRadius: "5px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* border */}
-              <div
-                style={{
-                  width: "671px",
-                  height: "1px",
-                  backgroundColor: "white",
-                  position: "absolute",
-                  left: "27.9%",
-                  marginTop: "10px",
-                }}
-              />
-
-              <div>
-                <div>
-                  <h4 style={{ marginTop: "30px" }}>
-                    Attempts allowed per user
-                  </h4>
-                  <input
-                    type="text"
-                    placeholder="Total attempts allowed"
-                    onChange={handleAttemptsAllowedChange}
-                    id="attempts"
-                    style={{
-                      width: "200px",
-                      padding: "10px",
-                      borderRadius: "5px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* border */}
-              <div
-                style={{
-                  width: "671px",
-                  height: "1px",
-                  backgroundColor: "white",
-                  position: "absolute",
-                  left: "27.9%",
-                  marginTop: "10px",
-                }}
-              />
-
-              <div>
-                <div>
-                  <h4 style={{ marginTop: "30px" }}>
-                    Is this is a public quiz?
-                  </h4>
-                  <select
-                    onChange={handlePublicQuizChange}
-                    style={{
-                      width: "222px",
-                      padding: "10px",
-                      borderRadius: "5px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <option value="Choose Option">Choose Option</option>
-                    <option value="True">True</option>
-                    <option value="False">False</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* border */}
-              <div
-                style={{
-                  width: "671px",
-                  height: "1px",
-                  backgroundColor: "white",
-                  position: "absolute",
-                  left: "27.9%",
-                  marginTop: "10px",
-                }}
-              />
-
-              <div>
-                <div style={{ marginBottom: "20px" }}>
-                  <h4 style={{ marginTop: "30px" }}>Allowed User</h4>
-                  {!!allowedUser &&
-                    allowedUser.map((value, index) => {
-                      let lastKey = allowedUser.length;
-                      if (lastKey === 1) {
-                        lastKey = undefined;
-                      }
-                      return (
-                        <div key={index}>
-                          {index === 0 && (
-                            <button
-                              style={{
-                                marginBottom: "10px",
-                                borderRadius: "4px",
-                                backgroundColor: "#333652",
-                                color: "white",
-                                padding: "5px",
-                              }}
-                              onClick={handleAddUserClick}
-                              key={index}
-                            >
-                              Add User
-                            </button>
-                          )}
-
-                          <div>
-                            <span id={index}>{index + 1} </span>
-                            <input
-                              type="text"
-                              value={value}
-                              placeholder="Enter user id"
-                              onChange={(e) =>
-                                handleAllowedUserChange(index, e)
-                              }
-                              style={{
-                                marginBottom: "10px",
-                                borderRadius: "4px",
-                                height: "30px",
-                                padding: "5px",
-                              }}
-                            />
-                          </div>
-
-                          {index === lastKey - 1 && (
-                            <button
-                              style={{
-                                marginTop: "10px",
-                                borderRadius: "4px",
-                                backgroundColor: "#333652",
-                                color: "white",
-                                padding: "5px",
-                              }}
-                              onClick={handleRemoveUserClick}
-                              key={index}
-                            >
-                              Remove User
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-
               {!!errors && errors.length > 0 && !errors.includes("Testing") && (
                 <div>
                   <ul>
@@ -936,7 +934,7 @@ function CreateQuiz() {
                   style={{
                     borderRadius: "4px",
                     padding: "10px 30px",
-                    backgroundColor: "red",
+                    backgroundColor: "#588157",
                     color: "white",
                     fontSize: "16px",
                     marginTop: "20px",

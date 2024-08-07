@@ -187,37 +187,82 @@ function PublishQuiz() {
               myQuizList.map((list) => {
                 return (
                   <div key={list._id}>
-                    <div style={{ display: "flex", gap: 200 }}>
-                      <div>
-                        <h4>{list.name}</h4>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ width: "250px" }}>
+                        <h4 style={{ fontSize: "18px" }}>{list.name}</h4>
                       </div>
                       {list?.isPublished ? (
-                        <button
-                          disabled
-                          style={{
-                            marginBottom: "10px",
-                            borderRadius: "4px",
-                            backgroundColor: "#333652",
-                            color: "white",
-                            padding: "5px",
-                          }}
-                        >
-                          Published
-                        </button>
+                        <div>
+                          <button
+                            disabled
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "gray",
+                              color: "white",
+                              padding: "5px",
+                              width: "75px",
+                              height: "30px",
+                            }}
+                          >
+                            Published
+                          </button>
+
+                          <button
+                            disabled
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "gray",
+                              color: "white",
+                              padding: "5px",
+                              width: "75px",
+                              height: "30px",
+                              marginLeft: "20px",
+                            }}
+                          >
+                            Update
+                          </button>
+                        </div>
                       ) : (
-                        <button
-                          onClick={(e) => handlePublishButtonClick(list._id, e)}
-                          style={{
-                            marginBottom: "10px",
-                            borderRadius: "4px",
-                            backgroundColor: "#333652",
-                            color: "white",
-                            padding: "5px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Publish
-                        </button>
+                        <div>
+                          <button
+                            onClick={(e) =>
+                              handlePublishButtonClick(list._id, e)
+                            }
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "#333652",
+                              color: "white",
+                              padding: "5px",
+                              cursor: "pointer",
+                              width: "75px",
+                              height: "30px",
+                            }}
+                          >
+                            Publish
+                          </button>
+
+                          <button
+                            onClick={(e) =>
+                              handlePublishButtonClick(list._id, e)
+                            }
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "#333652",
+                              color: "white",
+                              padding: "5px",
+                              cursor: "pointer",
+                              marginLeft: "20px",
+                              width: "75px",
+                              height: "30px",
+                            }}
+                          >
+                            Update
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -227,7 +272,7 @@ function PublishQuiz() {
               <div>
                 <div>
                   <div>
-                    <h4>No quiz found!</h4>
+                    <h4 style={{ fontSize: "18px" }}>No quiz found!</h4>
                   </div>
                 </div>
               </div>

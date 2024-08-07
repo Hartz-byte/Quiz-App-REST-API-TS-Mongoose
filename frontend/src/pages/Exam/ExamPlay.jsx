@@ -138,6 +138,7 @@ function ExamPlay() {
           setIsLoading(false);
           setQuizId("");
           setQuiz(response?.data?.data);
+          questionList = quiz.questionList;
         })
         .catch((error) => {
           setIsLoading(false);
@@ -249,23 +250,22 @@ function ExamPlay() {
           height: "100%",
           backgroundColor: "#e0e1dd",
           borderRadius: "15px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          paddingLeft: "50px",
         }}
       >
         <div>
-          <h2 style={{ color: "#333652" }}>Quiz Time</h2>
+          <h2 style={{ color: "#333652", marginLeft: "290px" }}>Quiz Time</h2>
         </div>
         <div>
-          <h2 style={{ color: "#333652" }}>{quiz?.name}</h2>
+          <h2 style={{ color: "#333652", marginLeft: "250px" }}>
+            {quiz?.name}
+          </h2>
 
           {/* border */}
           <div
             style={{
               width: "671px",
-              height: "1px",
+              height: "2px",
               backgroundColor: "white",
               position: "absolute",
               left: "27.9%",
@@ -279,26 +279,18 @@ function ExamPlay() {
                 <div key={list.questionNumber}>
                   <div>
                     <div>
-                      <div>
-                        <h4 style={{ color: "red", marginTop: "50px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          marginTop: "50px",
+                        }}
+                      >
+                        <h3 style={{ color: "red" }}>
                           Question {list.questionNumber}:
-                        </h4>
-                        <p>{list.question}</p>
-                      </div>
-                      <div>
-                        <button
-                          onClick={(e) => handleToggleFavouriteClick(list, e)}
-                          style={{
-                            marginBottom: "10px",
-                            borderRadius: "4px",
-                            backgroundColor: "#333652",
-                            color: "white",
-                            padding: "5px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Favorite
-                        </button>
+                        </h3>
+                        <h3>{list.question}</h3>
                       </div>
                     </div>
                     <div>
@@ -332,24 +324,61 @@ function ExamPlay() {
                                   )
                                 }
                               />
-                              <p>{key}:</p>
-                              <p>{list.options[key]}</p>
+                              <p style={{ marginLeft: "10px" }}>
+                                {list.options[key]}
+                              </p>
                             </div>
                           );
                         })}
-                      <button
-                        onClick={(e) =>
-                          handleClearButtonClick(list.questionNumber, e)
-                        }
+                      <div
                         style={{
-                          marginBottom: "10px",
-                          borderRadius: "4px",
-                          padding: "5px",
-                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginRight: "70px",
                         }}
                       >
-                        Clear choice
-                      </button>
+                        <button
+                          onClick={(e) =>
+                            handleClearButtonClick(list.questionNumber, e)
+                          }
+                          style={{
+                            margin: "10px",
+                            borderRadius: "4px",
+                            padding: "5px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Clear choice
+                        </button>
+
+                        {/* <button
+                          onClick={(e) => handleToggleFavouriteClick(list, e)}
+                          style={{
+                            marginBottom: "10px",
+                            borderRadius: "4px",
+                            backgroundColor: "#333652",
+                            color: "white",
+                            padding: "7px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Favorite
+                        </button> */}
+
+                        <button
+                          onClick={(e) => handleToggleFavouriteClick(list, e)}
+                          style={{
+                            marginBottom: "10px",
+                            borderRadius: "4px",
+                            backgroundColor: flag ? "#ccc" : "#333652",
+                            color: flag ? "black" : "white",
+                            padding: "7px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {flag ? "Remove from Favorite" : "Add to Favorite"}
+                        </button>
+                      </div>
 
                       {/* border */}
                       <div
@@ -396,9 +425,9 @@ function ExamPlay() {
               borderRadius: "4px",
               backgroundColor: "red",
               color: "white",
-              padding: "5px",
+              padding: "10px 15px",
               cursor: "pointer",
-              marginLeft: "150px",
+              marginLeft: "570px",
               marginTop: "40px",
             }}
           >
