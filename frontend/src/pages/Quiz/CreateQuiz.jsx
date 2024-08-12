@@ -946,8 +946,6 @@ function CreateQuiz() {
               </div>
             </div>
           </div>
-
-          {isLoading && <div>Loading...</div>}
         </div>
       </div>
     </div>

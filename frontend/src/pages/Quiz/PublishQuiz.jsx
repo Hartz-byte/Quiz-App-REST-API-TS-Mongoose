@@ -1,4 +1,4 @@
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -13,6 +13,8 @@ function PublishQuiz() {
   const headers = { Authorization: `Bearer ${token}` };
 
   const [flag, setFlag] = useState(true);
+  const [publishFlag, setPublishFlag] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState(false);
   const [quizId, setQuizId] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [myQuizList, setMyQuizList] = useState([]);
@@ -21,10 +23,20 @@ function PublishQuiz() {
     e.preventDefault();
     setIsLoading(true);
     setQuizId(id);
+
+    setPublishFlag(true);
+  }
+
+  function handleUpdateClick(id, e) {
+    e.preventDefault();
+    setQuizId(id);
+    setFlag(!flag);
+
+    setUpdateFlag(true);
   }
 
   useEffect(() => {
-    if (!!quizId) {
+    if (!!quizId & publishFlag) {
       axios
         .patch("http://localhost:3002/quiz/publish", { quizId }, { headers })
         .then((response) => {
@@ -34,9 +46,39 @@ function PublishQuiz() {
         .catch((error) => {
           setQuizId("");
           setFlag(!flag);
-          navigate("/auth/login");
+          navigate("/");
         });
     }
+    axios
+      .get("http://localhost:3002/quiz", { headers })
+      .then((response) => {
+        setIsLoading(false);
+        setMyQuizList(response?.data?.data);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        const message = error?.response?.data?.message;
+        if (message.includes("Quiz not found!")) {
+          setMyQuizList(["No quiz found"]);
+        }
+      });
+  }, [quizId, flag]);
+
+  useEffect(() => {
+    if (!!quizId & updateFlag) {
+      axios
+        .get(`http://localhost:3002/quiz/${quizId}`, { headers })
+        .then((response) => {
+          setIsLoading(false);
+          navigate("/updatequiz", { state: { token, quizId } });
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          console.log("update error", error);
+          navigate("/");
+        });
+    }
+
     axios
       .get("http://localhost:3002/quiz", { headers })
       .then((response) => {
@@ -221,7 +263,7 @@ function PublishQuiz() {
                               marginLeft: "20px",
                             }}
                           >
-                            Update
+                            Updated
                           </button>
                         </div>
                       ) : (
@@ -245,9 +287,7 @@ function PublishQuiz() {
                           </button>
 
                           <button
-                            onClick={(e) =>
-                              handlePublishButtonClick(list._id, e)
-                            }
+                            onClick={(e) => handleUpdateClick(list._id, e)}
                             style={{
                               marginBottom: "10px",
                               borderRadius: "4px",
