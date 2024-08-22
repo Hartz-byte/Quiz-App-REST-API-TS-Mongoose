@@ -27,9 +27,42 @@ const getUser: RequestHandler = async (req, res, next) => {
       err.statusCode = 401;
       throw err;
     } else {
-      resp = { status: "success", message: "User found", data: user };
+      resp = {
+        status: "success",
+        message: "User found",
+        data: user,
+      };
       res.status(200).send(resp);
     }
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+const getAllUser: RequestHandler = async (req, res, next) => {
+  let resp: ReturnResponse;
+  let allUsers: { id: string; name: string }[] = [];
+
+  try {
+    const users = await User.find({}, { name: 1, _id: 1 });
+    
+    if (!users) {
+      const err = new ProjectError("No users found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    allUsers = users.map((user) => ({
+      id: user._id.toString(),
+      name: user.name,
+    }));
+
+    resp = {
+      status: "success",
+      message: "Users found",
+      data: allUsers,
+    };
+    res.status(200).send(resp);
   } catch (error: any) {
     next(error);
   }
@@ -266,4 +299,5 @@ export {
   updateUser,
   changePassword,
   verifyDeactivateAccountOTP,
+  getAllUser,
 };

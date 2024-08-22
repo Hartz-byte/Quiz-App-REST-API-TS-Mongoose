@@ -99,7 +99,7 @@ const RegisterLogin = () => {
 
         console.log("Login successful");
 
-        navigate("/home", { state: { token } });
+        navigate("/quizlist", { state: { token } });
       }
     } catch (error) {
       setError(error.message);

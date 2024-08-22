@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Select from "react-select";
 
 import Pic1 from "../../assets/1.png";
 import Pic2 from "../../assets/2.png";
 import Pic3 from "../../assets/3.png";
-import PublishQuiz from "./PublishQuiz";
 
 function CreateQuiz() {
   const location = useLocation();
@@ -24,6 +24,8 @@ function CreateQuiz() {
   const [attemptsAllowedPerUser, setAttemptsAllowed] = useState(0);
   const [isPublicQuiz, setIsPublicQuiz] = useState("Choose Option");
   const [allowedUser, setAllowedUser] = useState([""]);
+  const [userNames, setUserNames] = useState([]);
+  const [userData, setUserData] = useState([]);
 
   const token = location?.state?.token;
   const headers = { Authorization: `Bearer ${token}` };
@@ -104,16 +106,24 @@ function CreateQuiz() {
     console.log(evt.target.value);
   }
 
-  function handleAllowedUserChange(index, e) {
+  // function handleAllowedUserChange(index, e) {
+  //   setAllowedUser((oldArray) => {
+  //     let allowedUserList = [];
+  //     return oldArray.map((value, ind) => {
+  //       if (index === ind) {
+  //         return e.target.value;
+  //       } else {
+  //         return value;
+  //       }
+  //     });
+  //   });
+  // }
+
+  function handleAllowedUserChange(index, selectedOption) {
     setAllowedUser((oldArray) => {
-      let allowedUserList = [];
-      return oldArray.map((value, ind) => {
-        if (index === ind) {
-          return e.target.value;
-        } else {
-          return value;
-        }
-      });
+      const newArray = [...oldArray];
+      newArray[index] = selectedOption.value;
+      return newArray;
     });
   }
 
@@ -144,22 +154,16 @@ function CreateQuiz() {
     });
   }
 
-  function handleRemoveOptionClick(questionNumber) {
+  function handleRemoveOptionClick(questionNumber, optionKey) {
     setQuestionList((oldArray) => {
       return oldArray.map((list) => {
         if (list.questionNumber === questionNumber) {
-          let length = Object.keys(oldArray[questionNumber - 1].options).length;
-          const optionsList = list.options;
-          let option = {};
-          for (let key in optionsList) {
-            if (key != length) {
-              option = { ...option, [key]: optionsList[key] };
-            }
-          }
+          const newOptions = { ...list.options };
+          delete newOptions[optionKey];
           return {
             questionNumber: list.questionNumber,
             question: list.question,
-            options: option,
+            options: newOptions,
           };
         } else {
           return list;
@@ -179,10 +183,9 @@ function CreateQuiz() {
     });
   }
 
-  function handleRemoveQuesClick(evt) {
-    evt.preventDefault();
+  function handleRemoveQuesClick(questionNumber) {
     setQuestionList((oldArray) => {
-      const questionNumber = questionNo + 1;
+      // const questionNumber = questionNo + 1;
       return oldArray.filter((list) => {
         if (list.questionNumber === questionNumber) {
           return false;
@@ -347,6 +350,32 @@ function CreateQuiz() {
     }
   }, [errors]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3002/user/allusers",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = response.data.data.map((user) => ({
+          // userId: user.id,
+          // name: user.name || "",
+          value: user.id,
+          label: user.name,
+        }));
+
+        setUserData(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   if (!token) {
     navigate("/");
   }
@@ -483,7 +512,7 @@ function CreateQuiz() {
 
           <div>
             <div>
-              <h2 style={{ color: "red" }}>Quiz Name *</h2>
+              <h2 style={{ color: "#333652" }}>Quiz Name *</h2>
               <input
                 type="text"
                 id="Name"
@@ -509,7 +538,7 @@ function CreateQuiz() {
                 }}
               />
 
-              <h2 style={{ color: "red" }}>Details *</h2>
+              <h2 style={{ color: "#333652" }}>Details *</h2>
               <div
                 style={{ display: "flex", alignItems: "center", gap: "20px" }}
               >
@@ -613,16 +642,15 @@ function CreateQuiz() {
                 </div>
               </div>
 
+              {/* Allowed User */}
               {isPublicQuiz === "False" && (
                 <div>
                   <div style={{ marginBottom: "20px" }}>
                     <h4 style={{ marginTop: "30px" }}>Allowed User</h4>
+
                     {!!allowedUser &&
                       allowedUser.map((value, index) => {
-                        let lastKey = allowedUser.length;
-                        if (lastKey === 1) {
-                          lastKey = undefined;
-                        }
+                        const lastKey = allowedUser.length;
                         return (
                           <div key={index}>
                             {index === 0 && (
@@ -641,23 +669,16 @@ function CreateQuiz() {
                               </button>
                             )}
 
-                            <div>
-                              <span id={index}>{index + 1} </span>
-                              <input
-                                type="text"
-                                value={value}
-                                placeholder="Enter user id"
-                                onChange={(e) =>
-                                  handleAllowedUserChange(index, e)
-                                }
-                                style={{
-                                  marginBottom: "10px",
-                                  borderRadius: "4px",
-                                  height: "30px",
-                                  padding: "5px",
-                                }}
-                              />
-                            </div>
+                            <Select
+                              value={userData.find(
+                                (option) => option.value === value
+                              )}
+                              onChange={(selectedOption) =>
+                                handleAllowedUserChange(index, selectedOption)
+                              }
+                              options={userData}
+                              placeholder="Select User"
+                            />
 
                             {index === lastKey - 1 && (
                               <button
@@ -715,12 +736,12 @@ function CreateQuiz() {
                 >
                   Questions
                 </h1>
-                {!!questionList &&
-                  questionList.map((list) => {
-                    let length = questionList.length;
-                    if (length === 1) {
-                      length = undefined;
-                    }
+                {questionList &&
+                  questionList.map((list, index) => {
+                    // let length = questionList.length;
+                    // if (length === 1) {
+                    //   length = undefined;
+                    // }
                     return (
                       <div key={list.questionNumber}>
                         {list.questionNumber === 1 && (
@@ -741,7 +762,7 @@ function CreateQuiz() {
 
                         <div>
                           <h2 style={{ color: "#fca311", marginLeft: "220px" }}>
-                            Question {list.questionNumber}:
+                            Question {index + 1}:
                           </h2>
                           <input
                             type="text"
@@ -760,6 +781,23 @@ function CreateQuiz() {
                         </div>
                         <div>
                           <p>Options</p>
+
+                          <button
+                            onClick={() =>
+                              handleAddOptionClick(list.questionNumber)
+                            }
+                            key="addOption"
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "#333652",
+                              color: "white",
+                              padding: "5px",
+                            }}
+                          >
+                            Add Option
+                          </button>
+
                           {!!list.options &&
                             Object.keys(list.options).map(function (key) {
                               const lastKey = Object.keys(list.options).length;
@@ -769,27 +807,9 @@ function CreateQuiz() {
                               }
                               return (
                                 <div key={key}>
-                                  {key === "1" && (
-                                    <button
-                                      onClick={() =>
-                                        handleAddOptionClick(
-                                          list.questionNumber
-                                        )
-                                      }
-                                      key="addOption"
-                                      style={{
-                                        marginBottom: "10px",
-                                        borderRadius: "4px",
-                                        backgroundColor: "#333652",
-                                        color: "white",
-                                        padding: "5px",
-                                      }}
-                                    >
-                                      Add Option
-                                    </button>
-                                  )}
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <p>{key}</p>
 
-                                  <div>
                                     <input
                                       type="text"
                                       value={list.options[key]}
@@ -809,13 +829,12 @@ function CreateQuiz() {
                                         marginBottom: "10px",
                                       }}
                                     />
-                                  </div>
 
-                                  {key === lastKeyString && (
                                     <button
                                       onClick={() =>
                                         handleRemoveOptionClick(
-                                          list.questionNumber
+                                          list.questionNumber,
+                                          key
                                         )
                                       }
                                       key="removeOption"
@@ -829,25 +848,37 @@ function CreateQuiz() {
                                     >
                                       Remove Option
                                     </button>
-                                  )}
+                                  </div>
                                 </div>
                               );
                             })}
-                        </div>
 
-                        {/* border */}
-                        <div
-                          style={{
-                            width: "500px",
-                            height: "5px",
-                            backgroundColor: "white",
-                            marginTop: "15px",
-                          }}
-                        />
+                          <div
+                            key={list.questionNumber}
+                            style={{ marginTop: "20px" }}
+                          >
+                            <span style={{ marginRight: "10px" }}>Answer</span>
 
-                        {list.questionNumber === length && (
+                            <input
+                              type="text"
+                              maxLength={1}
+                              placeholder="Enter correct answer index"
+                              onChange={(e) =>
+                                handleAnswersChange(list.questionNumber, e)
+                              }
+                              style={{
+                                marginBottom: "20px",
+                                borderRadius: "4px",
+                                height: "30px",
+                                padding: "5px",
+                              }}
+                            />
+                          </div>
+
                           <button
-                            onClick={handleRemoveQuesClick}
+                            onClick={() =>
+                              handleRemoveQuesClick(list.questionNumber)
+                            }
                             key="removeQues"
                             style={{
                               margin: "20px 0px",
@@ -860,7 +891,17 @@ function CreateQuiz() {
                           >
                             Remove Question
                           </button>
-                        )}
+                        </div>
+
+                        {/* border */}
+                        <div
+                          style={{
+                            width: "500px",
+                            height: "5px",
+                            backgroundColor: "white",
+                            marginTop: "15px",
+                          }}
+                        />
                       </div>
                     );
                   })}
@@ -878,34 +919,6 @@ function CreateQuiz() {
                 }}
               />
 
-              <div>
-                <div>
-                  <h2 style={{ marginTop: "35px", color: "red" }}>Answers *</h2>
-                  {!!questionList &&
-                    questionList.map((list) => {
-                      return (
-                        <div key={list.questionNumber}>
-                          <span>Ans {list.questionNumber}: </span>
-                          <input
-                            type="text"
-                            maxLength={1}
-                            placeholder="Enter correct answer index"
-                            onChange={(e) =>
-                              handleAnswersChange(list.questionNumber, e)
-                            }
-                            style={{
-                              marginBottom: "20px",
-                              borderRadius: "4px",
-                              height: "30px",
-                              padding: "5px",
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-
               {/* border */}
               <div
                 style={{
@@ -919,10 +932,14 @@ function CreateQuiz() {
               />
 
               {!!errors && errors.length > 0 && !errors.includes("Testing") && (
-                <div>
+                <div style={{ marginTop: "50px" }}>
                   <ul>
                     {errors.map((message) => {
-                      return <li key={message}>{message}</li>;
+                      return (
+                        <li key={message} style={{ color: "red" }}>
+                          {message}
+                        </li>
+                      );
                     })}
                   </ul>
                 </div>

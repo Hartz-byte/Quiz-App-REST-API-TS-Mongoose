@@ -8,6 +8,7 @@ import {
   updateUser,
   changePassword,
   verifyDeactivateAccountOTP,
+  getAllUser,
 } from "../controllers/user";
 
 import { logOut } from "../controllers/blacklistedToken";
@@ -21,6 +22,9 @@ const router = express.Router();
 // User should be authorize
 //Get /user/:userId
 router.get("/", isAuthenticated, getUser);
+
+//  get all users name
+router.get("/allusers", isAuthenticated, getAllUser);
 
 // User should be authenticate
 // User should be authorize
