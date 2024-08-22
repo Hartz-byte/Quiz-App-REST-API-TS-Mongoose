@@ -400,7 +400,11 @@ function ExamPlay() {
             <div>
               <ul>
                 {errors.map((message) => {
-                  return <li key={message}>{message}</li>;
+                  return (
+                    <li key={message} style={{ color: "red" }}>
+                      {message}
+                    </li>
+                  );
                 })}
               </ul>
             </div>

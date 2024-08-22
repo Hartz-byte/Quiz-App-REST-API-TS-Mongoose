@@ -1,41 +1,62 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 import Pic1 from "../../assets/1.png";
 import Pic2 from "../../assets/2.png";
+import Pic3 from "../../assets/3.png";
 
-function Reports() {
-  const params = useParams();
+function AllReports() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const reportId = params?.reportId;
   const token = location?.state?.token;
   const headers = { Authorization: `Bearer ${token}` };
 
-  const [report, setReport] = useState();
-  const [quizId, setQuizId] = useState("");
+  const [flag, setFlag] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [tempReports, setTempReports] = useState();
 
-  function handleAllReportsClick(evt) {
+  function handleViewButtonClick(id, evt) {
     evt.preventDefault();
-    navigate("/all-reports", { state: { token } });
+    navigate(`/auth/report/${id}`, { state: { token } });
   }
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3002/report/${reportId}`, { headers })
-      .then((response) => {
-        setIsLoading(false);
-        setReport(response?.data?.data);
-        setQuizId(response?.data?.data?.quizId);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        navigate("/auth/login");
+    if (!tempReports) {
+      axios
+        .get(`http://localhost:3002/report`, { headers })
+        .then((response) => {
+          setFlag(!flag);
+          setTempReports(response?.data?.data);
+        })
+        .catch(() => {
+          console.log("error: ", error);
+
+          navigate("/");
+        });
+    } else if (!!tempReports) {
+      console.log("Temp reports: ", tempReports);
+
+      tempReports.map((report, index) => {
+        axios
+          .get("http://localhost:3002/quiz/allpublishedquiz", { headers })
+          .then((response) => {
+            // console.log(response?.data?.data[index].name);
+
+            setTempReports((oldReports) =>
+              oldReports.map((oldReport, i) => ({
+                ...oldReport,
+                quizName: response?.data?.data[i].name,
+              }))
+            );
+          })
+          .catch(() => {
+            navigate("/");
+          });
       });
-  }, [quizId]);
+    }
+  }, [flag]);
 
   if (!token) {
     navigate("/");
@@ -60,7 +81,7 @@ function Reports() {
         <img
           src={Pic2}
           alt="pic1"
-          style={{ position: "absolute", top: 260, right: 30, width: "250px" }}
+          style={{ position: "absolute", top: 300, right: 30, width: "250px" }}
         />
       </div>
 
@@ -149,67 +170,36 @@ function Reports() {
       {/* main container */}
       <div
         style={{
-          width: "30%",
+          width: "50%",
           height: "100%",
           backgroundColor: "#e0e1dd",
           borderRadius: "15px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "140px",
         }}
       >
-        <div>
-          <h1 style={{ color: "#333652", marginLeft: "20px" }}>Quiz App</h1>
+        <h1 style={{ textAlign: "center" }}>All Reports</h1>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <h2 style={{ color: "red" }}>Report</h2>
-            {!!report && (
-              <div style={{ marginBottom: "20px" }}>
+        {!!tempReports &&
+          tempReports.map((report, index) => {
+            return (
+              <div
+                key={index}
+                style={{ marginLeft: "20px", marginBottom: "100px" }}
+              >
                 <div>
-                  <div style={{ display: "flex" }}>
-                    <h3 style={{ width: "110px" }}>Status: </h3>
-                    <h3 style={{ fontWeight: "bold" }}>{report.result}</h3>
-                  </div>
-                  <div style={{ display: "flex" }}>
-                    <h3 style={{ width: "110px" }}>Marks: </h3>
-                    <h3>
-                      {report.score}/{report.total}
-                    </h3>
-                  </div>
-                  <div style={{ display: "flex" }}>
-                    <h3 style={{ width: "110px" }}>Percentage: </h3>
-                    <h3>{report.percentage}%</h3>
-                  </div>
+                  <h1>Report {index + 1}</h1>
+                  <h4>Quiz Name: {report?.quizName}</h4>
+                  <h4>Result: {report.result}</h4>
+                  <h4>Percentage: {report.percentage} %</h4>
+                  <h4>
+                    Score: {report.score} / {report.total}
+                  </h4>
                 </div>
               </div>
-            )}
-
-            <button
-              onClick={handleAllReportsClick}
-              style={{
-                marginBottom: "10px",
-                borderRadius: "4px",
-                backgroundColor: "#333652",
-                color: "white",
-                padding: "5px",
-                cursor: "pointer",
-              }}
-            >
-              All Results
-            </button>
-          </div>
-        </div>
+            );
+          })}
       </div>
     </div>
   );
 }
 
-export default Reports;
+export default AllReports;

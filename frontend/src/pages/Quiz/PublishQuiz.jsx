@@ -35,6 +35,21 @@ function PublishQuiz() {
     setUpdateFlag(true);
   }
 
+  function handleDeleteQuizClick(id, e) {
+    e.preventDefault();
+    setIsLoading(true);
+    axios
+      .delete(`http://localhost:3002/quiz/${id}`, { headers })
+      .then(() => {
+        setFlag(!flag);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        setFlag(!flag);
+        navigate("/");
+      });
+  }
+
   useEffect(() => {
     if (!!quizId & publishFlag) {
       axios
@@ -263,7 +278,23 @@ function PublishQuiz() {
                               marginLeft: "20px",
                             }}
                           >
-                            Updated
+                            Update
+                          </button>
+
+                          <button
+                            disabled
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "gray",
+                              color: "white",
+                              padding: "5px",
+                              marginLeft: "20px",
+                              width: "75px",
+                              height: "30px",
+                            }}
+                          >
+                            Delete
                           </button>
                         </div>
                       ) : (
@@ -301,6 +332,23 @@ function PublishQuiz() {
                             }}
                           >
                             Update
+                          </button>
+
+                          <button
+                            onClick={(e) => handleDeleteQuizClick(list._id, e)}
+                            style={{
+                              marginBottom: "10px",
+                              borderRadius: "4px",
+                              backgroundColor: "red",
+                              color: "white",
+                              padding: "5px",
+                              cursor: "pointer",
+                              marginLeft: "20px",
+                              width: "75px",
+                              height: "30px",
+                            }}
+                          >
+                            Delete
                           </button>
                         </div>
                       )}
